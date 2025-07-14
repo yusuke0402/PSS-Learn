@@ -1,5 +1,6 @@
 import numpy as np
 import yaml
+import random
 from data import DataSets
 from propensityscore import propensityscore
 from trim import target_trim,source_trim
@@ -8,10 +9,13 @@ from trim import target_trim,source_trim
 with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
 split=config["hyperparam"]["n_split"]
-est_theta=np.empty(config["hyperparam"]["n_trial"])
+est_theta=np.zeros(config["hyperparam"]["n_trial"])
 true_values=np.ones_like(est_theta)
 for j in range(0,config["hyperparam"]["n_trial"]):
     #1.データ作成
+    random.seed(j)
+    np.random.seed(j)
+
     data=DataSets()   
 
     #2.傾向スコアの推定
@@ -29,8 +33,7 @@ for j in range(0,config["hyperparam"]["n_trial"]):
         source_1_group=source_1_data[source_1_condition]
         average_treatment_effect = np.mean(target_1_group['Outcomes'].to_numpy()) - np.mean(source_1_group['Outcomes'].to_numpy())
         weight=(len(source_1_group['Outcomes'])+len(target_1_group['Outcomes']) )/ (len(source_1_data['Outcomes'])+len(target_1_data['Outcomes']))
-        print(average_treatment_effect)
-        est_theta[j]+= average_treatment_effect* weight
+        est_theta[j] += average_treatment_effect* weight
     
 print("thetaの平均値：",np.mean(est_theta))
 print("thetaのMSE：",(np.mean(est_theta-true_values))**2)

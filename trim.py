@@ -4,7 +4,7 @@ import pandas as pd
 def target_trim(covariates,outcomes,propensity_scores):
     ids=np.arange(1,outcomes.shape[0]+1)
     data={'ID':ids,}
-    for i in range(11):
+    for i in range(covariates.shape[1]):
         data[f'Covariate_{i+1}']=covariates[:,i]
     data['Outcomes']=outcomes
     data['Propensity_Score']=propensity_scores
@@ -18,7 +18,7 @@ def target_trim(covariates,outcomes,propensity_scores):
 def source_trim(covariates,outcomes,propensity_scores,split_values):
     ids=np.arange(1,outcomes.shape[0]+1)
     data={'ID':ids,}
-    for i in range(11):
+    for i in range(covariates.shape[1]):
         data[f'Covariate_{i+1}']=covariates[:,i]
     data['Outcomes']=outcomes
     data['Propensity_Score']=propensity_scores
