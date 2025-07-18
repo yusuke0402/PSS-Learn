@@ -56,6 +56,9 @@ class DataSets:
     self.__epsilon=np.random.normal(loc=0,scale=1,size=self.__historical_2_number)
     self.__historical_2_y=truefunction(x=self.__historical_2_x,t=np.zeros(self.__historical_2_number),epsilon=self.__epsilon).reshape(-1,1)
 
+    self.__historical_x=np.concatenate((self.__historical_1_x,self.__historical_2_x),axis=0) #履歴試験の共変量
+    self.__historical_y=np.concatenate((self.__historical_1_y,self.__historical_2_y),axis=0) #履歴試験のアウトカム
+
   
 #変数のカプセル化、意図しない値の書き換えを防ぐ目的
   @property
@@ -91,3 +94,9 @@ class DataSets:
   @property
   def historical_2_x_mean(self):
     return self.__historical_2_x_mean
+  @property
+  def training_historical_x(self):
+    return self.__historical_x   
+  @property
+  def training_historical_y(self):
+    return self.__historical_y
