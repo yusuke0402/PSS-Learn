@@ -16,7 +16,8 @@ hyperparam:
 
 datasettings:
   target_number: 240
-  source1_number: 36
-  source2_number: 24
+  source1_number: 1000
+  source2_number: 1000
+  source_borrow_number: 60
   true_coffience:
     - [0,1,1,1,1,1,1,1,1,1,1] 
