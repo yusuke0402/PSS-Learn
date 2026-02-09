@@ -12,7 +12,7 @@ def estimate_r(ps_target,ps_source):
     max_ps=max(ps_target.max(),ps_source.max())
     #被積分関数の定義
     def min_density(x):
-        return np.minimum(kde_target(x), kde_source(x))
+        return np.minimum(kde_target(x), kde_source(x)).item()
     #類似度rの計算
     est_r=quad(min_density,min_ps,max_ps)
     return est_r
