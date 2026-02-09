@@ -1,6 +1,7 @@
 import numpy as np
 import yaml
 import random
+from tqdm import tqdm
 
 from composite_likelihood import etstimate_theta
 from calculate_overlapping import estimate_r
@@ -21,7 +22,7 @@ est_eta = np.empty(split)
 N_k = np.empty(split)
 results = []
 A = config["hyperparameters"]["source_borrow_number"]
-for j in range(0, n_trials):
+for j in tqdm(range(0,n_trials)):
     # 1.データ作成
     random.seed(j)
     np.random.seed(j)

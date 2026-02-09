@@ -2,7 +2,8 @@ from scipy.stats import gaussian_kde
 from scipy.integrate import quad
 import numpy as np
 import pandas as pd
-
+import warnings
+warnings.filterwarnings('ignore', category=DeprecationWarning)
 def estimate_r(ps_target,ps_source):
     #密度関数の推定
     try:

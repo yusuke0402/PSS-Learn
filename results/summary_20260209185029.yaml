@@ -1,0 +1,14 @@
+timestamp: '20260209185029'
+senario_name: data_scenario_4
+model_id: linear
+model_scenario_id: model_scenario_1
+n_features: 10
+target_number: 200
+source_number: 200
+n_trial: 1000
+statistics:
+  mean: 1.011844159973062
+  variance: 0.24044696681393607
+  std_dev: 0.490353919953676
+  mse: 0.24034680397258962
+notes: YOU CAN WRITE SOME NOTES HERE
