@@ -5,8 +5,12 @@ import pandas as pd
 
 def estimate_r(ps_target,ps_source):
     #密度関数の推定
-    kde_target=gaussian_kde(ps_target)
-    kde_source=gaussian_kde(ps_source)
+    try:
+        kde_target=gaussian_kde(ps_target)
+        kde_source=gaussian_kde(ps_source)
+    except (ValueError, np.linalg.LinAlgError):
+        return 0.0, 0.0
+    
     #積分範囲の指定
     min_ps=min(ps_target.min(),ps_source.min())
     max_ps=max(ps_target.max(),ps_source.max())

@@ -10,30 +10,35 @@ from propensityscore import propensityscore
 from trim import target_trim,source_trim
 
 #0.初期設定
-with open("config.yaml", "r") as f:
+with open("configs/config.yaml", "r") as f:
     config = yaml.safe_load(f)
-split=config["hyperparam"]["n_split"]
-est_theta=np.zeros(config["hyperparam"]["n_trial"])
+split=config["hyperparameters"]["n_split"]
+n_trials=config["hyperparameters"]["n_trial"]
+est_theta=np.zeros(n_trials)
 true_values=np.ones_like(est_theta)
-A=config["datasettings"]["source_borrow_number"]
-for j in range(0,config["hyperparam"]["n_trial"]):
+est_r=np.empty(split)
+est_lamda=np.empty(split)
+est_eta=np.empty(split)
+N_k=np.empty(split)
+A=config["hyperparameters"]["source_borrow_number"]
+for j in range(0,n_trials):
     #1.データ作成
     random.seed(j)
     np.random.seed(j)
 
-    data=DataSets()   
+    data=DataSets(config=config)   
 
-    est_r=np.empty(split)
-    est_lamda=np.empty(split)
-    est_eta=np.empty(split)
-    N_k=np.empty(split)
-
+    data.generate_data()
+    target_x=data.target_x
+    source_x=data.source_x
+    target_y=data.target_y
+    source_y=data.source_y
     #2.傾向スコアの推定
-    ppscore_target,ppscore_source = propensityscore(target_x=data.training_current_x[:,1:],target_y=data.training_current_y,source_x=data.training_historical_x[:,1:],source_y=data.training_historical_y)
+    ppscore_target,ppscore_source = propensityscore(target_x=target_x[:,1:],target_y=target_y,source_x=source_x[:,1:],source_y=source_y)
 
     #3.傾向スコアに基づいてデータを層別化・トリミング
-    target_data,split_values=target_trim(data.training_current_x,data.training_current_y.reshape(-1),ppscore_target)
-    source_data=source_trim(data.training_historical_x,data.training_historical_y.reshape(-1),ppscore_source,split_values)
+    target_data,split_values=target_trim(target_x,target_y.reshape(-1),ppscore_target)
+    source_data=source_trim(source_x,source_y.reshape(-1),ppscore_source,split_values)
 
     #4.r_j_kの推定
     for i in range(0,split):
@@ -56,14 +61,24 @@ for j in range(0,config["hyperparam"]["n_trial"]):
         est_lamda[i]=estimate_weight(sum_r=sum_r_1,r_k=est_r[i],A=A,N_j_k=N_k[i])
 
     #4.層ごとに平均治療効果を推定
+    weighted_theta_sum = 0
+    total_weight = 0
+    
     for i in range(0,split):
         target_condition = target_data['Group'] == i+1
         source_condition = source_data['Group'] == i+1  
         target_group=target_data[target_condition]
         source_group=source_data[source_condition]
-        average_treatment_effect = np.mean(target_group['Outcomes'].to_numpy()) - np.mean(source_group['Outcomes'].to_numpy())
-        weight=est_lamda[i]/np.sum(est_lamda)
-        est_theta[j] += average_treatment_effect* weight
+        
+        if len(target_group) > 0 and len(source_group) > 0:
+            average_treatment_effect = np.mean(target_group['Outcomes'].to_numpy()) - np.mean(source_group['Outcomes'].to_numpy())
+            weighted_theta_sum += average_treatment_effect * est_lamda[i]
+            total_weight += est_lamda[i]
+            
+    if total_weight > 0:
+        est_theta[j] = weighted_theta_sum / total_weight
+    else:
+        est_theta[j] = np.nan
     
 print("thetaの平均値：",np.mean(est_theta))
 print("thetaのMSE：",(np.mean(est_theta-true_values))**2)
