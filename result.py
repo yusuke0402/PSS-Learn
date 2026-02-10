@@ -24,6 +24,7 @@ class Result:
             "mse": float(np.mean((estimates - config["hyperparameters"]["true_value"]) ** 2)),
         }   
         summary_data = {
+            "method": "Propensity Score Stratifcation",
             "timestamp": now,
             "senario_name": config["scenario"]["data_scenario_id"],
             "model_id":config["scenario"]["model_id"],
