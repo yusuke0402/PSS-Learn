@@ -1,0 +1,15 @@
+method: Propensity Score Stratifcation
+timestamp: '20260212213103'
+senario_name: data_scenario_3
+model_id: linear
+model_scenario_id: model_scenario_1
+n_features: 10
+target_number: 20
+source_number: 20
+n_trial: 1000
+statistics:
+  mean: 0.9362927861205315
+  variance: 1.503055479468247
+  std_dev: 1.2259916310759413
+  mse: 1.505478554858555
+notes: YOU CAN WRITE SOME NOTES HERE
